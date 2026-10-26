@@ -2,13 +2,14 @@
 
 
 A job discovery, resume matching, and application tracking platform.
-Planned components
+### Planned components
 - Spring Boot API (Java 17)
 - Python resume parsing and matching service
 - React frontend
 - Browser extension with user-reviewed autofill
 - MySQL database
-Engineering practices
+
+### Engineering practices
 - Feature branches and pull requests
 - Automated testing before merging
 - Project-specific configuration
