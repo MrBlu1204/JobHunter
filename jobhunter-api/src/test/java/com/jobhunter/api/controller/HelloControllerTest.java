@@ -16,7 +16,7 @@ class HelloControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void hellooShouldReturnWelcomeMessage() throws Exception {
+    void helloShouldReturnWelcomeMessage() throws Exception {
         mockMvc.perform(get("/api/v1/hello"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message")
