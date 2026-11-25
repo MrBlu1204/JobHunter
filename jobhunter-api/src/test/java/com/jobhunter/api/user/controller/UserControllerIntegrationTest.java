@@ -4,18 +4,18 @@ import com.jobhunter.api.AbstractIntegrationTest;
 import com.jobhunter.api.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 class UserControllerIntegrationTest extends AbstractIntegrationTest {
@@ -28,12 +28,16 @@ class UserControllerIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Test
     void whenUserIsCreated() throws Exception {
 
         String request = """
                 {
                     "email": "api.test@example.com",
+                    "password": "StrongPassword123!",
                     "firstName": "John",
                     "middleName": "Michael",
                     "lastName": "Doe",
@@ -55,6 +59,15 @@ class UserControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.updatedAt").isNotEmpty());
 
         assertTrue(userRepository.existsByEmail("api.test@example.com"));
+
+        var savedUser = userRepository.findByEmail("api.test@example.com")
+                .orElseThrow();
+
+        assertNotEquals("StrongPassword123!", savedUser.getPasswordHash());
+        assertTrue(passwordEncoder.matches(
+                "StrongPassword123!",
+                savedUser.getPasswordHash()
+        ));
     }
 
     @Test
@@ -63,6 +76,7 @@ class UserControllerIntegrationTest extends AbstractIntegrationTest {
         String request = """
                 {
                     "email": "duplicate.api@example.com",
+                    "password": "StrongPassword123!",
                     "firstName": "Jane",
                     "lastName": "Doe"
                 }
@@ -86,6 +100,7 @@ class UserControllerIntegrationTest extends AbstractIntegrationTest {
         String request = """
                 {
                     "email": "invalid-email",
+                    "password": "StrongPassword123!",
                     "firstName": "",
                     "lastName": "Doe"
                 }

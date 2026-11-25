@@ -1,5 +1,6 @@
 package com.jobhunter.api.exception;
 
+import com.jobhunter.api.auth.exception.InvalidCredentialsException;
 import com.jobhunter.api.dto.ApiErrorResponse;
 import com.jobhunter.api.user.exception.EmailAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,6 +68,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleEmailAlreadyExistsException(EmailAlreadyExistsException exception,
                                                                               HttpServletRequest request){
         HttpStatus status = HttpStatus.CONFLICT;
+
+        ApiErrorResponse response = new ApiErrorResponse(
+                Instant.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI(),
+                Map.of()
+        );
+
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException exception,
+                                                                              HttpServletRequest request){
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
 
         ApiErrorResponse response = new ApiErrorResponse(
                 Instant.now(),
