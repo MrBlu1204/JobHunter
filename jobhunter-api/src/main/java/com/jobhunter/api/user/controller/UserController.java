@@ -33,7 +33,7 @@ public class UserController {
         user.setLastName(request.lastName());
         user.setPhoneNumber(request.phoneNumber());
 
-        User savedUser = userService.createUser(user);
+        User savedUser = userService.createUser(user, request.password());
 
         UserResponse response = new UserResponse(
                 savedUser.getUserId(),

@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 @Transactional
 class UserRepositoryIntegrationTest extends AbstractIntegrationTest {
 
